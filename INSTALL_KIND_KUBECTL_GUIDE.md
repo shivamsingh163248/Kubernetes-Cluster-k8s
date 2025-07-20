@@ -9,36 +9,39 @@ This guide explains how to install [kind](https://kind.sigs.k8s.io/) (Kubernetes
 ### 1️⃣ Create the Shell Script File
 
 #### ✍️ Option 1: Using `nano` (Beginner-friendly)
+
 ```bash
 nano install-kind-kubectl.sh
+```
 
-o save and exit in nano:
+Paste the script content (see below) inside the editor.
 
-Press Ctrl + O → then press Enter to save.
+To **save and exit** in nano:
+- Press `Ctrl + O` → then press `Enter` to save.
+- Press `Ctrl + X` to exit the editor.
 
-Press Ctrl + X to exit the editor.
+---
 
-✍️ Option 2: Using vi or vim
-bash
-Copy
-Edit
+#### ✍️ Option 2: Using `vi` or `vim`
+
+```bash
 vi install-kind-kubectl.sh
-To insert text:
+```
 
-Press i (to enter insert mode).
+To **insert text**:
+- Press `i` (to enter insert mode)
 
 After pasting the script:
+- Press `Esc`
+- Type `:wq` and press `Enter` to write and quit
 
-Press Esc
+---
 
-Type :wq and press Enter to write and quit.
+## 📄 Script Content
 
-📄 Script Content
-Paste the following content into your install-kind-kubectl.sh file:
+Paste the following content into your `install-kind-kubectl.sh` file:
 
-bash
-Copy
-Edit
+```bash
 #!/bin/bash
 
 set -e
@@ -65,40 +68,48 @@ sudo mv ./kind /usr/local/bin/kind
 kind --version
 
 echo "✅ Installation completed!"
-✅ Run the Script
+```
+
+---
+
+## ✅ Run the Script
+
 Make the script executable:
 
-bash
-Copy
-Edit
+```bash
 chmod +x install-kind-kubectl.sh
+```
+
 Then run it:
 
-bash
-Copy
-Edit
+```bash
 ./install-kind-kubectl.sh
-🧪 Test the Installation
+```
+
+---
+
+## 🧪 Test the Installation
+
 To verify everything is working correctly:
 
-bash
-Copy
-Edit
+```bash
 kubectl version --client
 kind --version
+```
+
 You should see the installed versions printed in your terminal.
 
-📎 Notes
-Always refer to the official websites for the latest versions:
+---
 
-kubectl releases
+## 📎 Notes
 
-kind releases
+- Always refer to the official websites for the latest versions:
+  - [kubectl releases](https://github.com/kubernetes/kubernetes/releases)
+  - [kind releases](https://github.com/kubernetes-sigs/kind/releases)
+- If you're using an ARM-based system (e.g., Raspberry Pi), replace `linux/amd64` with `linux/arm64` in the download URLs.
 
-If you're using an ARM-based system (e.g. Raspberry Pi), change the download links to use linux/arm64 instead of linux/amd64.
+---
 
-Happy Clustering! ☸️🐳
+## 🐳 Happy Clustering!
 
-yaml
-Copy
-Edit
+Now you're ready to start working with local Kubernetes clusters using kind and kubectl! ☸️🚀
