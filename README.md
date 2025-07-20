@@ -1,50 +1,60 @@
-# Define the content of the markdown file
-markdown_content = """
-# 🚀 Installing `kind` and `kubectl` on Ubuntu/Linux
+# ⚙️ KIND + KUBECTL Installer for Ubuntu/Linux
 
-This guide explains how to install [kind](https://kind.sigs.k8s.io/) (Kubernetes IN Docker) and [kubectl](https://kubernetes.io/docs/tasks/tools/) (Kubernetes CLI) on a Linux system using a shell script.
+This repository provides a shell script to install both **[kind](https://kind.sigs.k8s.io/)** (Kubernetes IN Docker) and **[kubectl](https://kubernetes.io/docs/tasks/tools/)** (Kubernetes CLI) on Ubuntu/Linux systems.
 
 ---
 
-## 📜 Step-by-Step Instructions
+## 📂 Files Included
 
-### 1️⃣ Create the Shell Script File
+- `install-kind-kubectl.sh` – Shell script for automatic installation.
+- `INSTALL_KIND_KUBECTL_GUIDE.md` – Step-by-step usage and explanation guide.
 
-#### ✍️ Option 1: Using `nano` (Beginner-friendly)
+---
+
+## 🚀 Quick Start
+
+### 1️⃣ Clone or Download the Repository
+
+```bash
+git clone https://github.com/your-username/kind-kubectl-installer.git
+cd kind-kubectl-installer
+```
+
+Or download the files directly from GitHub.
+
+---
+
+## 📝 Installation Guide
+
+### 2️⃣ Create the Installation Script
+
+#### Option 1: Using `nano`
 
 ```bash
 nano install-kind-kubectl.sh
-Paste the script content (see below) inside the editor.
+```
 
-To save and exit in nano:
+Paste the script content into the editor.
 
-Press Ctrl + O → then press Enter to save.
+To save and exit:
+- `Ctrl + O` → `Enter`
+- `Ctrl + X`
 
-Press Ctrl + X to exit the editor.
+#### Option 2: Using `vi` or `vim`
 
-✍️ Option 2: Using vi or vim
-bash
-Always show details
-
-Copy
+```bash
 vi install-kind-kubectl.sh
-To insert text:
+```
 
-Press i (to enter insert mode)
+- Press `i` to enter insert mode.
+- Paste the script.
+- Press `Esc`, then type `:wq` and press `Enter`.
 
-After pasting the script:
+---
 
-Press Esc
+### 3️⃣ Script Content
 
-Type :wq and press Enter to write and quit
-
-📄 Script Content
-Paste the following content into your install-kind-kubectl.sh file:
-
-bash
-Always show details
-
-Copy
+```bash
 #!/bin/bash
 
 set -e
@@ -56,14 +66,12 @@ KIND_VERSION="v0.22.0"
 echo "🔧 Updating system..."
 sudo apt update && sudo apt install -y curl apt-transport-https
 
-# Install kubectl
 echo "📦 Installing kubectl version $KUBECTL_VERSION..."
 curl -LO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
 chmod +x kubectl
 sudo mv kubectl /usr/local/bin/
 kubectl version --client
 
-# Install kind
 echo "📦 Installing kind version $KIND_VERSION..."
 curl -Lo ./kind "https://kind.sigs.k8s.io/dl/${KIND_VERSION}/kind-linux-amd64"
 chmod +x ./kind
@@ -71,51 +79,59 @@ sudo mv ./kind /usr/local/bin/kind
 kind --version
 
 echo "✅ Installation completed!"
-✅ Run the Script
-Make the script executable:
+```
 
-bash
-Always show details
+---
 
-Copy
+## ✅ Run the Script
+
+Make it executable:
+
+```bash
 chmod +x install-kind-kubectl.sh
-Then run it:
+```
 
-bash
-Always show details
+Run it:
 
-Copy
+```bash
 ./install-kind-kubectl.sh
-🧪 Test the Installation
-To verify everything is working correctly:
+```
 
-bash
-Always show details
+---
 
-Copy
+## 🔍 Test the Installation
+
+Verify versions:
+
+```bash
 kubectl version --client
 kind --version
-You should see the installed versions printed in your terminal.
+```
 
-📎 Notes
-Always refer to the official websites for the latest versions:
+You should see both tools installed correctly.
 
-kubectl releases
+---
 
-kind releases
+## 📘 Full Guide
 
-If you're using an ARM-based system (e.g., Raspberry Pi), replace linux/amd64 with linux/arm64 in the download URLs.
+See [`INSTALL_KIND_KUBECTL_GUIDE.md`](./INSTALL_KIND_KUBECTL_GUIDE.md) for the detailed markdown-based tutorial.
 
-🐳 Happy Clustering!
-Now you're ready to start working with local Kubernetes clusters using kind and kubectl! ☸️🚀
-"""
+---
 
-Write the content to a file
-file_path = Path("/mnt/data/INSTALL_KIND_KUBECTL_GUIDE.md")
-file_path.write_text(markdown_content.strip())
+## 🔄 Update Instructions
 
-file_path.name
+To upgrade versions, edit the `KUBECTL_VERSION` and `KIND_VERSION` variables in the script.
 
-Always show details
+---
 
-Copy
+## 💡 Notes
+
+- Tested on Ubuntu 20.04+
+- Compatible with Debian-based distributions
+- For ARM systems (e.g. Raspberry Pi), use `linux/arm64` in URLs.
+
+---
+
+## 🐳 Happy Clustering!
+
+Now you’re ready to use Kubernetes locally with kind + kubectl! ☸️🐳
