@@ -160,13 +160,58 @@ kubectl apply -f apache-service.yaml
 kubectl get svc apache-service
 ```
 
-✅ **Output will show a NodePort (e.g., 30008).**
+**1. Check Service details again**
 
-**Now you can access Apache Pods via:**
+Run:
+
+```bash
+kubectl get svc apache-service -o wide
+```
+
+**Output looks like:**
 
 ```
-http://localhost:30008
+NAME             TYPE       CLUSTER-IP    EXTERNAL-IP   PORT(S)          AGE
+apache-service   NodePort   10.96.7.220   <none>        8081:32333/TCP   5s
 ```
+
+👉 **Key part:**
+
+- **port: 8081** → Service port (inside cluster)
+- **NodePort: 32333** → Random port exposed on every Node
+
+**2. Find your Node's IP**
+
+Since you're running Kubernetes locally (Kind/Minikube) or on VM, you need the Node IP.
+
+```bash
+kubectl get nodes -o wide
+```
+
+**Example output:**
+
+```
+NAME                 STATUS   ROLES           AGE   VERSION   INTERNAL-IP
+kind-control-plane   Ready    control-plane   50m   v1.29.2   172.18.0.2
+```
+
+👉 **Node IP here is 172.18.0.2.**
+
+**3. Curl the NodePort**
+
+Now test:
+
+```bash
+curl http://<NODE-IP>:32333
+```
+
+**Example:**
+
+```bash
+curl http://172.18.0.2:32333
+```
+
+✅ **You should see Apache's default HTML page.**
 
 ### Step 8: Test Deployment (Instead of Manual Pods)
 
