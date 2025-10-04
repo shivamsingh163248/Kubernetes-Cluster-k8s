@@ -40,6 +40,50 @@ kubectl get pods
 kubectl describe pod apache1
 ```
 
+**Expected Output:**
+
+**1. After applying the pod manifest:**
+```bash
+kubectl apply -f apache1.yaml
+```
+**Output:**
+```
+pod/apache1 created
+```
+
+**2. Check pod status:**
+```bash
+kubectl get pods
+```
+**Output:**
+```
+NAME      READY   STATUS    RESTARTS   AGE
+apache1   1/1     Running   0          30s
+```
+
+👉 **Key parts explained:**
+- **NAME**: apache1 → Pod name from metadata
+- **READY**: 1/1 → 1 container ready out of 1 total
+- **STATUS**: Running → Pod is successfully running
+- **RESTARTS**: 0 → Number of container restarts
+- **AGE**: 30s → Time since pod creation
+
+**3. Get detailed pod information:**
+```bash
+kubectl get pods -o wide
+```
+**Output:**
+```
+NAME      READY   STATUS    RESTARTS   AGE   IP           NODE                 NOMINATED NODE   READINESS GATES
+apache1   1/1     Running   0          45s   10.244.0.5   kind-control-plane   <none>           <none>
+```
+
+👉 **Additional details:**
+- **IP**: 10.244.0.5 → Pod's internal cluster IP
+- **NODE**: kind-control-plane → Which node is running this pod
+- **NOMINATED NODE**: <none> → Advanced scheduling info
+- **READINESS GATES**: <none> → Custom readiness conditions
+
 ✅ **Expected: Pod apache1 will start running in default namespace.**
 
 ### Step 2: Verify Pod & Namespace
@@ -123,6 +167,45 @@ spec:
 kubectl apply -f apache2.yaml
 kubectl get pods
 ```
+
+**Expected Output:**
+
+**1. After applying apache2.yaml:**
+```bash
+kubectl apply -f apache2.yaml
+```
+**Output:**
+```
+pod/apache2 created
+```
+
+**2. Check both pods:**
+```bash
+kubectl get pods
+```
+**Output:**
+```
+NAME      READY   STATUS    RESTARTS   AGE
+apache1   1/1     Running   0          2m15s
+apache2   1/1     Running   0          15s
+```
+
+**3. View pods with labels:**
+```bash
+kubectl get pods --show-labels
+```
+**Output:**
+```
+NAME      READY   STATUS    RESTARTS   AGE     LABELS
+apache1   1/1     Running   0          2m30s   app=apache,tier=web
+apache2   1/1     Running   0          30s     app=apache,tier=web,version=v2
+```
+
+👉 **Key observations:**
+- **Both pods running** → apache1 and apache2 are operational
+- **Same app label** → Both have `app=apache` for service selection
+- **Different versions** → apache2 has additional `version=v2` label
+- **Age difference** → Shows creation timeline
 
 **Now you'll have 2 Pods (apache1, apache2) both running in the cluster.**
 
@@ -254,7 +337,58 @@ kubectl get deploy
 kubectl get pods
 ```
 
-✅ **Kubernetes will automatically create 2 Apache Pods.**
+**Expected Output:**
+
+**1. After applying deployment:**
+```bash
+kubectl apply -f apache-deployment.yaml
+```
+**Output:**
+```
+deployment.apps/apache-deployment created
+```
+
+**2. Check deployment status:**
+```bash
+kubectl get deploy
+```
+**Output:**
+```
+NAME                READY   UP-TO-DATE   AVAILABLE   AGE
+apache-deployment   2/2     2            2           45s
+```
+
+👉 **Deployment status explained:**
+- **READY**: 2/2 → 2 pods ready out of 2 desired
+- **UP-TO-DATE**: 2 → Pods with latest template
+- **AVAILABLE**: 2 → Pods available for service
+- **AGE**: 45s → Time since deployment creation
+
+**3. Check all pods now:**
+```bash
+kubectl get pods
+```
+**Output:**
+```
+NAME                                 READY   STATUS    RESTARTS   AGE
+apache1                              1/1     Running   0          5m
+apache2                              1/1     Running   0          3m
+apache-deployment-7d4c8b5f9b-k8n2m   1/1     Running   0          50s
+apache-deployment-7d4c8b5f9b-x7p4q   1/1     Running   0          50s
+```
+
+👉 **Key differences:**
+- **Manual pods** → apache1, apache2 (fixed names)
+- **Deployment pods** → apache-deployment-xxx-yyy (generated names)
+- **Total count** → Now 4 pods running (2 manual + 2 from deployment)
+
+**4. View deployment-managed pods only:**
+```bash
+kubectl get pods -l app=apache
+```
+**Output shows all pods with app=apache label (manual + deployment pods)**
+
+✅ **Kubernetes will automatically create 2 Apache Pods via Deployment.**
 
 ### Summary of Phase 2
 
