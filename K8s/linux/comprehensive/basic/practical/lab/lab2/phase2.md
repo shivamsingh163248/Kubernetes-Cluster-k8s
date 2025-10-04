@@ -1,66 +1,227 @@
-# Lab 2: Create & Manage Pods - Basic Pod Operations
+# Phase 2: Basic Pod Operations
 
-Welcome to Lab 2! This lab focuses on hands-on Pod creation, management, and basic Kubernetes operations. You'll learn to create Pods manually, manage them with Deployments, and expose them using Services.
+## Lab 2 – Create & Manage Pods
 
-## 🎯 Lab Objectives
+### Step 1: Create Your First Pod
 
-By the end of this lab, you will:
-- ✅ Create and manage individual Pods using YAML manifests
-- ✅ Understand Pod-to-Node mapping and scheduling
-- ✅ Access Pod logs and execute commands inside containers
-- ✅ Work with namespaces and Pod organization
-- ✅ Expose Pods using Services for network access
-- ✅ Use Deployments for automated Pod management
-- ✅ Compare manual Pod creation vs Deployment management
+**Theory:**
 
-## ⏱️ Estimated Duration: 1-1.5 hours
+- A Pod is the smallest deployable unit in Kubernetes
+- A Pod can have 1 or more containers (usually 1 for simple apps)
+- The Pod is created using a YAML manifest
 
-## 📋 Prerequisites
+**Example: Simple Apache Pod (apache1.yaml)**
 
-### Required Completion
-- ✅ **Lab 1 completed** → Environment setup and basic operations
-- ✅ **Active Kind cluster** → Your cluster from Lab 1 should be running
-- ✅ **Core concepts understood** → Pods, Services, Namespaces, Labels
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: apache1
+  labels:
+    app: apache
+spec:
+  containers:
+  - name: apache-container
+    image: httpd
+    ports:
+    - containerPort: 80
+```
 
-### Verification Commands
+**Commands:**
+
 ```bash
-# Verify your cluster is ready
-kubectl cluster-info
-kubectl get nodes
+# Apply pod manifest
+kubectl apply -f apache1.yaml
 
-# Check if you have a working cluster from Lab 1
-kind get clusters
+# Check pods in default namespace
+kubectl get pods
+
+# Get detailed info
+kubectl describe pod apache1
 ```
 
----
+✅ **Expected: Pod apache1 will start running in default namespace.**
 
-## 🚀 Lab Structure
+### Step 2: Verify Pod & Namespace
+
+**Theory:**
+
+- By default, Pods are created in the default namespace
+- You can check which namespace a Pod belongs to
+
+**Commands:**
+
+```bash
+# List all pods in all namespaces
+kubectl get pods -A
+
+# Check only default namespace
+kubectl get pods -n default
+```
+
+### Step 3: Check Pod → Node Mapping
+
+**Theory:**
+
+- Pods are scheduled by the scheduler onto Nodes
+- You can see which Pod is running on which Node
+
+**Command:**
+
+```bash
+kubectl get pods -o wide
+```
+
+✅ **This shows: Pod IP, Node name, container runtime.**
+
+### Step 4: Access Pod Logs
+
+**Theory:**
+
+You can view logs from the container inside the Pod.
+
+**Command:**
+
+```bash
+kubectl logs apache1
+```
+
+### Step 5: Exec into Pod Container
+
+**Theory:**
+
+We can enter into a Pod's container shell.
+
+**Command:**
+
+```bash
+kubectl exec -it apache1 -- /bin/bash
+```
+
+### Step 6: Create Second Pod Manually
+
+**Example: Another Apache Pod (apache2.yaml)**
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: apache2
+  labels:
+    app: apache
+spec:
+  containers:
+  - name: apache-container
+    image: httpd
+    ports:
+    - containerPort: 80
+```
+
+**Commands:**
+
+```bash
+kubectl apply -f apache2.yaml
+kubectl get pods
+```
+
+**Now you'll have 2 Pods (apache1, apache2) both running in the cluster.**
+
+### Step 7: Expose Pods with a Service
+
+**Theory:**
+
+- Pods are ephemeral (IP changes if restarted)
+- To access them, we need a Service
+- NodePort Service exposes Pods on a stable port
+
+**Service (apache-service.yaml):**
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: apache-service
+spec:
+  selector:
+    app: apache
+  ports:
+  - protocol: TCP
+    port: 8081
+    targetPort: 80
+  type: NodePort
+```
+
+**Commands:**
+
+```bash
+kubectl apply -f apache-service.yaml
+
+# Check service details
+kubectl get svc apache-service
+```
+
+✅ **Output will show a NodePort (e.g., 30008).**
+
+**Now you can access Apache Pods via:**
 
 ```
-lab2/
-├── manifests/        # Pre-built YAML configurations
-├── exercises/        # Step-by-step practical exercises  
-├── solutions/        # Complete solutions and examples
-└── README.md         # This comprehensive guide
+http://localhost:30008
 ```
 
----
+### Step 8: Test Deployment (Instead of Manual Pods)
 
-## 📍 Phase 1: Understanding Deployments (25-30 minutes)
+**Theory:**
 
-## 🧠 What You'll Learn
+- Instead of creating Pods manually, we use a Deployment
+- Deployment manages replicas and ensures Pods are auto-healed
 
-**Core Pod Concepts:**
-- Manual Pod creation and lifecycle
-- Pod-to-Node mapping and scheduling
-- Pod logs and troubleshooting
-- Difference between Pods and Deployments
+**Deployment (apache-deployment.yaml):**
 
-**Hands-on Skills:**
-- Creating Pods from YAML manifests
-- Inspecting Pod details and status
-- Exposing Pods through Services
-- Understanding Pod limitations vs Deployments
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: apache
+  template:
+    metadata:
+      labels:
+        app: apache
+    spec:
+      containers:
+      - name: apache-container
+        image: httpd
+        ports:
+        - containerPort: 80
+```
+
+**Commands:**
+
+```bash
+kubectl apply -f apache-deployment.yaml
+
+# Check deployment & pods
+kubectl get deploy
+kubectl get pods
+```
+
+✅ **Kubernetes will automatically create 2 Apache Pods.**
+
+### Summary of Phase 2
+
+| Concept | What You Learned | Command |
+|---------|------------------|---------|
+| **Pod** | Smallest unit | `kubectl get pods` |
+| **Namespace** | Logical separation | `kubectl get pods -A` |
+| **Node mapping** | Pod → Node | `kubectl get pods -o wide` |
+| **Logs** | View app logs | `kubectl logs pod-name` |
+| **Exec** | Enter container | `kubectl exec -it pod-name -- bash` |
+| **Service** | Stable networking | `kubectl get svc` |
+| **Deployment** | Auto-manage Pods | `kubectl get deploy` |
 
 ---
 
